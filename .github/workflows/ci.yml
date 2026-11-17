@@ -17,6 +17,10 @@ jobs:
         # Standard Intel image: https://github.com/actions/runner-images#available-images
         os: [ubuntu-latest, windows-latest, macos-15-intel]
         python: ["3.11", "3.13"]
+        exclude:
+          - {os: macos-15-intel, python: "3.11"}
+        include:
+          - {os: macos-26-intel, python: "3.11"}
     env:
       PYTHONUTF8: "1"
     # Code lives in src/ (skeleton-lab layout); every lab command runs from there.

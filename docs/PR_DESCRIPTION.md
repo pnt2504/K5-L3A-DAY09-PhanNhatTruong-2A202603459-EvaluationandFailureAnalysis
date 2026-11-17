@@ -85,3 +85,11 @@ cost_per_success          50.8077    50.8077  +0.0000
 - `loosened_spec`: exit 1; INTEGRITY PR spec fingerprint differs from evaluated spec
 
 Chi tiết số liệu, ngưỡng và giới hạn: `docs/eval_card.md`, `docs/final_review.md`. Chưa có kết quả chấm ẩn.
+
+## Trạng thái nộp và CI remote
+
+- Runtime/baseline đã bootstrap tại commit 5d6b8e7 trên main.
+- PR nộp bài: https://github.com/pnt2504/K5-L3A-DAY09-PhanNhatTruong-2A202603459-EvaluationandFailureAnalysis/pull/1.
+- Hai job bắt buộc eval-gate và eval-gate-v2 đã SUCCESS: https://github.com/pnt2504/K5-L3A-DAY09-PhanNhatTruong-2A202603459-EvaluationandFailureAnalysis/actions/runs/44130310352.
+- Ubuntu/Windows và macOS Intel Python 3.13 đã đạt; macOS Python 3.11 đang chuyển image do thiếu capacity.
+- Không thay runtime đã được xác minh; xem docs/submission_status.md và checks mới nhất của PR.

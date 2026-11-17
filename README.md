@@ -96,6 +96,10 @@ cd src
 
 Để sinh lại eval set sau khi thay logic gắn FM, chạy `lab9.evalset --build --check`, rồi `lab9.evalset --v2 --build`. Sau khi đổi eval set, nhãn hoặc grader/spec, chạy lại verify để report và baseline cùng nguồn. Không sửa tay JSON kết quả. `.gitattributes` và bộ sinh dữ liệu cố định LF để hash không đổi khi Git chuyển file giữa Windows/Linux.
 
+## Nộp bài
+
+Đã mở [PR #1](https://github.com/pnt2504/K5-L3A-DAY09-PhanNhatTruong-2A202603459-EvaluationandFailureAnalysis/pull/1) và xác nhận hai job bắt buộc [eval-gate / eval-gate-v2](https://github.com/pnt2504/K5-L3A-DAY09-PhanNhatTruong-2A202603459-EvaluationandFailureAnalysis/actions/runs/44130310352) đạt trên runtime đang nộp. Trạng thái commit/checks mới nhất: [submission_status.md](docs/submission_status.md).
+
 ## Baseline tin cậy và GitHub Actions
 
 Workflow [eval-gate.yml](.github/workflows/eval-gate.yml) chạy khi có **pull request** hoặc **workflow_dispatch**, không chạy chỉ vì push thẳng lên `main`.
