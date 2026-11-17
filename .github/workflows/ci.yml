@@ -2,6 +2,7 @@ name: lab8-cross-platform
 
 on:
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -12,7 +13,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        # macos-latest currently targets ARM and failed to acquire capacity.
+        # Standard Intel image: https://github.com/actions/runner-images#available-images
+        os: [ubuntu-latest, windows-latest, macos-15-intel]
         python: ["3.11", "3.13"]
     env:
       PYTHONUTF8: "1"
