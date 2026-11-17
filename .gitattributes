@@ -1,0 +1,5 @@
+# Keep source fixtures and generated eval data byte-stable across Windows/Linux.
+* text=auto eol=lf
+*.sqlite binary
+*.png binary
+*.pdf binary

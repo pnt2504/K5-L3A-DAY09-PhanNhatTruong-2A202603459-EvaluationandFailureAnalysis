@@ -13,6 +13,7 @@ written by this script only -- never edit reports/ by hand.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import platform
 import tempfile
@@ -37,6 +38,10 @@ WORLD = Path("data/public_world_state.json")
 
 def load_spec(path: Path = SPEC) -> dict[str, Any]:
     return yaml.safe_load(path.read_text(encoding="utf-8"))
+
+
+def spec_fingerprint(spec: dict[str, Any]) -> str:
+    return hashlib.sha256(json.dumps(spec, sort_keys=True, separators=(",", ":")).encode("utf-8")).hexdigest()[:12]
 
 
 def make_task(shape: str, world: dict[str, Any], claims: list[dict[str, Any]], labels: dict[str, Any], tmp: Path):
@@ -107,6 +112,7 @@ def run_eval(shape: str, spec: dict[str, Any], seeds: list[int] | None = None) -
     run_id = f"E-{shape}-{date.today():%Y%m%d}-{eval_set_sha[:4]}"
     return {"run_id": run_id, "shape": shape,
             "manifest": {"eval_set": spec["eval_set"], "eval_set_sha": eval_set_sha, "items": len(items),
+                         "labels_sha": evalset.sha12(Path(spec["labels"])), "spec_sha": spec_fingerprint(spec),
                          "seeds": seeds, "metric_spec_version": spec["metric_spec_version"],
                          "llm": "MockLLM", "python": platform.python_version()},
             "rows": rows, "evaluator_failures": failures,
@@ -146,11 +152,21 @@ def per_item(report: dict[str, Any], metric: str, slice_name: str | None = None)
     """Mean over seeds for each item -- the unit the paired bootstrap resamples.
     With slice_name, keep only rows whose item carries that slice tag (M5)."""
     acc: dict[str, list[float]] = {}
+    prefix, _, suffix = metric.rpartition("_")
+    pass_k = prefix in ("pass_at", "pass_hat") and suffix.isdecimal()
+    source_metric = "pass_rate" if pass_k or metric == "pass_5" else metric
     for r in report["rows"]:
         if slice_name is not None and slice_name not in (r.get("slices") or []):
             continue
-        if r.get(metric) is not None:
-            acc.setdefault(r["item_id"], []).append(float(r[metric]))
+        if r.get(source_metric) is not None:
+            acc.setdefault(r["item_id"], []).append(float(r[source_metric]))
+    if pass_k:
+        function = stats.pass_at_k if prefix == "pass_at" else stats.pass_hat_k
+        k = int(suffix)
+        return {item: function(len(values), sum(bool(v) for v in values), k)
+                for item, values in acc.items() if 1 <= k <= len(values)}
+    if metric == "pass_5":
+        return {item: float(all(values)) for item, values in acc.items()}
     return {k: sum(v) / len(v) for k, v in acc.items()}
 
 
